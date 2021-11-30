@@ -6,6 +6,9 @@ class Field
 
     int game_over;
 
+    sf::SoundBuffer buffer;
+    sf::Sound sound;
+
     // To generate random values.
     std::default_random_engine random_engine;
 

@@ -2,6 +2,7 @@
 #include <random>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include "src/Math.cpp"
 #include "src/Headers/Cell.hpp"
@@ -13,7 +14,6 @@
     
 int main()
 { 
-
     // To make game framerate independent.
     int lag = 0;
     
@@ -22,6 +22,14 @@ int main()
     sf::Event event;
     sf::RenderWindow window(sf::VideoMode(BOARD_WIDTH * SCREEN_RESIZE, BOARD_HEIGHT * SCREEN_RESIZE), "Minesweeper", sf::Style::Close);
     window.setView(sf::View(sf::FloatRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT)));
+
+    // Sound addition.
+    sf::SoundBuffer bufferMusic;
+    bufferMusic.loadFromFile("src/Resources/Audio/GameMusic_02.wav");
+    sf::Sound music;
+    music.setBuffer(bufferMusic);
+    music.setLoop(true);
+    music.play();
 
     sf::Sprite Alexander;
     sf::Texture Alexander_texture1;
@@ -94,6 +102,10 @@ int main()
                             case sf::Keyboard::Enter:
                             {
                                 // We restart the game after Enter is released.
+                                if(field.get_game_over() != 0)
+                                {
+                                    music.play();
+                                }
                                 field.restart();
                             }
                         }
@@ -112,7 +124,7 @@ int main()
                                     break;
                                 }
                                 case sf::Mouse::Right:
-                                {
+                                {                                    
                                     field.flag_cell(mouse_cell_x, mouse_cell_y);
                                 }
                             }
@@ -135,11 +147,13 @@ int main()
             // If we loose the game.
             if(field.get_game_over() == -1)
             {
+                music.stop();
                 Alexander.setTexture(Alexander_texture3);
             }
             // If we win the game.
             else if(field.get_game_over() == 1)
             {
+                music.stop();
                 Alexander.setTexture(Alexander_texture2);
             }
             else

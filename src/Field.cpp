@@ -1,5 +1,6 @@
 #include <random>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include "Headers/Cell.hpp"
 #include "Headers/Field.hpp"
@@ -180,6 +181,10 @@ void Field::flag_cell(int i_x, int i_y)
     if(game_over == 0)
     {
         get_cell(i_x, i_y, cells)->flag();
+
+        buffer.loadFromFile("src/Resources/Audio/Flag.wav");
+        sound.setBuffer(buffer);
+        sound.play();
     }
 }
 
@@ -227,9 +232,16 @@ void Field::open_cell(int i_x, int i_y)
         {
             // When the player opens a cell with a mine.
             game_over = -1;
+            buffer.loadFromFile("src/Resources/Audio/explosion_02.wav");
+            sound.setBuffer(buffer);
+            sound.play();
         }
         else
         {
+            buffer.loadFromFile("src/Resources/Audio/click.wav");
+            sound.setBuffer(buffer);
+            sound.play();
+
             int total_closed_cells = 0;
 
             // We count how many cells are closed.
@@ -242,6 +254,9 @@ void Field::open_cell(int i_x, int i_y)
             if(MINES == total_closed_cells)
             {
                 game_over = 1;
+                buffer.loadFromFile("src/Resources/Audio/GameWon.wav");
+                sound.setBuffer(buffer);
+                sound.play();
 
                 // Then we start the effect.
                 get_cell(i_x, i_y, cells)->set_effect_timer(EFFECT_DURATION -1);
